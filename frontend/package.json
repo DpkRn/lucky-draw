@@ -1,6 +1,8 @@
 {
-  "name": "frontend",
+  "name": "luckydraw",
   "private": true,
+  "author": "DpkRn",
+  "description": "Flex Prize Pool - Spin the wheel to win extreme prizes and view live user locations on a real-time map. Built with React, Vite, Express, and Leaflet.",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
