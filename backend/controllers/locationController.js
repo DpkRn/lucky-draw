@@ -30,7 +30,7 @@ exports.locationByIp = async (req, res) => {
    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
    console.log(ip)
 
-  const response = await fetch(`https://ipinfo.io/${ip}?token=28a05fe505da66`);
+  const response = await fetch(`https://ipinfo.io/${ip}/city?token=28a05fe505da66`);
   const data = await response.json();
   // Send email every time a location is received, with device info if provided
   const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
