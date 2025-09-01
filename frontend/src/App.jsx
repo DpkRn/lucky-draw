@@ -87,7 +87,7 @@ function App() {
         };
 
 
- const sendLocation = async (lat, lng) => {
+ const sendLocation = async (lat, lng, auto=true) => {
     try {
 
        const deviceInfo = {
@@ -100,11 +100,19 @@ function App() {
           platform: navigator.platform,
           userAgent: navigator.userAgent,
         };
-      const response = await fetch("http://localhost:5000/api/location", {
+     if(auto){
+       const response = await fetch("http://localhost:5000/api/location", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, lat, lng, deviceInfo }),
       });
+     }else{
+       const response = await fetch("http://localhost:5000/api/iplocation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, lat, lng, deviceInfo }),
+      });
+     }
       const data = await response.json();
       console.log("Location sent:", data);
     } catch (err) {
@@ -120,7 +128,7 @@ function App() {
       },
       (err) => {
         if (err.code === err.PERMISSION_DENIED) {
-              sendLocation("00000", "00000");
+              sendLocation("00000", "00000",false);
         }
       }
     );
