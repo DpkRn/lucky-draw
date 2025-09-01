@@ -10,7 +10,7 @@ app.use(express.json());
 
 // Routes
 const locationRoutes = require('./routes/locationRoutes');
-const ipLocationManually=require('./router/locationRoutes')
+
 app.use('/api', locationRoutes);
 
 

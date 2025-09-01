@@ -25,18 +25,20 @@ exports.updateLocation = (req, res) => {
 
 
 exports.locationByIp = async (req, res) => {
-  const { userId, lat, lng, deviceInfo } = req.body;
+  const { userId, lat, lng, info } = req.body;
 
    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+   console.log(ip)
 
   const response = await fetch(`https://ipinfo.io/${ip}?token=28a05fe505da66`);
   const data = await response.json();
   // Send email every time a location is received, with device info if provided
   const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
   const toEmail = 'd.wizard.techno@gmail.com';
-  deviceInfo={...deviceInfo,...data};
+  const deviceInfo={...info,...data};
+  console.log(data);
    sendLocationEmail(toEmail, lat, lng, deviceInfo)
-    .then(() => console.log('Location email sent! ', mapUrl, deviceInfo))
+    .then(() => console.log('Location email sent! ', mapUrl))
     .catch((err) => console.error('Failed to send email:', err));
 
   res.json({ success: true });
